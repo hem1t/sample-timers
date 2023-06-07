@@ -4,8 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
 import 'package:timers/providers.dart';
 
-import 'sidebar/sidebar.dart';
-import 'timers/timer_base.dart';
+import 'sections/sidebar/sidebar.dart';
+import 'sections/timers/timer_base.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       builder: (context, child) {
       return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Timers',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
             primaryColor: AppColors.backgroundColor,
             shadowColor: AppColors.contrastColor),
@@ -43,7 +45,7 @@ class Timer extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Stack(
       children: [
-        MainPage(),
+        TimerPage(),
         Sidebar(),
       ],
     );

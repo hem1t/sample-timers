@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
 import 'package:timers/providers.dart';
 
-class MainPage extends StatelessWidget {
-  const MainPage({super.key});
+class TimerPage extends StatelessWidget {
+  const TimerPage({super.key});
 
   @override
   Widget build(BuildContext context) {

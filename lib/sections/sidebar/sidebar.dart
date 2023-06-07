@@ -45,12 +45,12 @@ class Sidebar extends StatelessWidget {
                         // FIXME
                         SidebarButton(
                           height: .07.sh.r,
-                          // width: .33.sw,
+                          width: .38.sw,
                           label: "Home",
                         ),
                         SidebarButton(
                             height: .07.sh.r,
-                            // width: .33.sw,
+                            width: .38.sw,
                             label: "Settings"),
                       ]),
                   // Exit
