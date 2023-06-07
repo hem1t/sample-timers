@@ -26,7 +26,7 @@ class Sidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double sideBar =
-        context.select((AppSettings a) => a.isSidebarOpen) ? 1 : 0;
+        context.select((SideBarControl a) => a.isSidebarOpen) ? 1 : 0;
 
     return ClipRect(
       child: BackdropFilter(
@@ -35,29 +35,32 @@ class Sidebar extends StatelessWidget {
               height: Get.height,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 20.w),
-              color: AppColors.backgroundColor,
+              color: AppColors.backgroundColor.withOpacity(0.4),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // FIXME
-                        SidebarButton(
-                          height: .07.sh.r,
-                          width: .38.sw,
-                          label: "Home",
-                        ),
-                        SidebarButton(
-                            height: .07.sh.r,
-                            width: .38.sw,
-                            label: "Settings"),
-                      ]),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SidebarButton(
+                        height: 40.h,
+                        width: .42.sw,
+                        onPressed: context.read<WhatTimer>().toPomodoro,
+                        label: "Home",
+                      ),
+                      SidebarButton(
+                        height: 40.h,
+                        width: .42.sw,
+                        onPressed: context.read<WhatTimer>().toHome,
+                        label: "Settings",
+                      )
+                    ],
+                  ),
                   // Exit
                   Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: context.read<AppSettings>().exitSidebar,
+                        onPressed: context.read<SideBarControl>().exitSidebar,
                         style: TextButton.styleFrom(
                           backgroundColor: AppColors.sideHighlight,
                           foregroundColor: AppColors.mainHighlight,
@@ -74,39 +77,55 @@ class Sidebar extends StatelessWidget {
               ))),
     )
         .animate(target: sideBar, effects: anim)
-        .slideX(duration: animDur, delay: 100.ms);
+        .slideX(duration: animDur, delay: 70.ms);
   }
 }
 
-class SidebarButton extends Container {
-  final double? height;
-  final double? width;
+class SidebarButton extends StatelessWidget {
+  final double height;
+  final double width;
   final String? label;
   final Icon? icon;
-  SidebarButton({super.key, this.height, this.width, this.icon, this.label})
-      : super(
-          height: height,
-          width: width,
-          alignment: Alignment.center,
-          padding: REdgeInsets.all(5),
-          margin: REdgeInsets.all(5),
-          decoration: BoxDecoration(
-              border: Border.all(width: 3.r, color: AppColors.hiddenHighlight),
-              borderRadius: BorderRadius.circular(8.r)),
-          child: Row(
-            mainAxisAlignment: icon != null && label != null
-                ? MainAxisAlignment.spaceEvenly
-                : MainAxisAlignment.center,
-            children: [
-              icon ?? Container(),
-              Text(
-                label ?? "",
-                style: TextStyle(
-                    color: AppColors.contrastColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 23.sp),
-              ),
-            ],
+  final void Function() onPressed;
+  const SidebarButton(
+      {super.key,
+      required this.height,
+      required this.width,
+      this.icon,
+      this.label,
+      required this.onPressed})
+      : super();
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onPressed,
+      style: TextButton.styleFrom(
+        minimumSize: Size(width, height),
+        backgroundColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            width: 3.r,
+            color: AppColors.hiddenHighlight,
           ),
-        );
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: icon != null && label != null
+            ? MainAxisAlignment.spaceEvenly
+            : MainAxisAlignment.center,
+        children: [
+          icon ?? Container(),
+          Text(
+            label ?? "",
+            style: TextStyle(
+                color: AppColors.contrastColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 22.sp),
+          ),
+        ],
+      ),
+    ).marginAll(5.r);
+  }
 }

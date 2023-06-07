@@ -31,7 +31,8 @@ class MyApp extends StatelessWidget {
         home: Scaffold(
             backgroundColor: AppColors.backgroundColor,
             body: MultiProvider(providers: [
-              ChangeNotifierProvider(create: (_) => AppSettings())
+              ChangeNotifierProvider(create: (_) => SideBarControl()),
+              ChangeNotifierProvider(create: (_) => WhatTimer())
             ], child: const Timer())),
       );
     });
@@ -43,10 +44,10 @@ class Timer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Stack(
+    return Stack(
       children: [
-        TimerPage(),
-        Sidebar(),
+        context.watch<WhatTimer>().page,
+        const Sidebar(),
       ],
     );
   }
