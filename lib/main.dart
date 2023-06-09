@@ -5,7 +5,6 @@ import 'package:timers/color.dart';
 import 'package:timers/providers.dart';
 
 import 'sections/sidebar/sidebar.dart';
-import 'sections/timers/timer_base.dart';
 
 
 void main() {
