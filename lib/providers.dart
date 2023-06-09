@@ -28,7 +28,13 @@ class WhatTimer extends ChangeNotifier {
 
   toPomodoro() {
     page = const PomodoroTimerPage();
-    debugPrint("Set Timer to Pomodoro!");
+    debugPrint("Set Timer to POMODORO!");
+    notifyListeners();
+  }
+
+  toChimes() {
+    page = const ChimesTimerPage();
+    debugPrint("Set Timer to CHIMES!");
     notifyListeners();
   }
 }

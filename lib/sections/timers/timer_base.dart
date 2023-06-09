@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
 import 'package:timers/providers.dart';
 
+import 'chimes/chimes_page.dart';
 import 'pomodoro/pomodoro_page.dart';
 
 class TimerPage extends StatelessWidget {
@@ -28,5 +29,14 @@ class PomodoroTimerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const PomodoroPage();
+  }
+}
+
+class ChimesTimerPage extends StatelessWidget {
+  const ChimesTimerPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const ChimesPage();
   }
 }
