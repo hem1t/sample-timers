@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
-import 'package:timers/layout_widgets/buttons.dart';
-import 'package:timers/providers.dart';
+import 'package:timers/color.dart';
 
 class SidebarHead extends StatelessWidget {
   const SidebarHead({
@@ -11,24 +8,20 @@ class SidebarHead extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ClearTextButton(
-          height: 40.h,
-          width: .42.sw,
-          fontSize: 22.sp,
-          onPressed: context.read<WhatTimer>().toPomodoro,
-          label: "Home",
-        ),
-        ClearTextButton(
-          height: 40.h,
-          width: .42.sw,
-          fontSize: 22.sp,
-          onPressed: context.read<WhatTimer>().toHome,
-          label: "Settings",
-        )
-      ],
-    );
+    return DefaultTabController(
+        length: 2,
+        child: TabBar(
+          indicatorColor: AppColors.mainHighlight,
+          tabs: [
+            Icon(
+              Icons.home,
+              color: AppColors.contrastColor,
+            ),
+            Icon(
+              Icons.settings,
+              color: AppColors.contrastColor,
+            ),
+          ],
+        ));
   }
 }
