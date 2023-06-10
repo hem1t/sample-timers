@@ -9,6 +9,7 @@ class ClearTextButton extends StatelessWidget {
   final double width;
   final String? label;
   final Icon? icon;
+  final Widget? child;
   final void Function() onPressed;
   final double? fontSize;
   const ClearTextButton(
@@ -18,7 +19,7 @@ class ClearTextButton extends StatelessWidget {
       this.icon,
       this.label,
       required this.onPressed,
-      this.fontSize})
+      this.fontSize, this.child})
       : super();
 
   @override
@@ -36,7 +37,7 @@ class ClearTextButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.r),
         ),
       ),
-      child: Row(
+      child: child ?? Row(
         mainAxisAlignment: icon != null && label != null
             ? MainAxisAlignment.spaceEvenly
             : MainAxisAlignment.center,
