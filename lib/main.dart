@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
 import 'package:timers/providers.dart';
+import 'package:timers/sections/timers/timer_base.dart';
 
 import 'sections/sidebar/sidebar.dart';
 
@@ -43,10 +44,10 @@ class Timer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return const Stack(
       children: [
-        context.watch<WhatTimer>().page,
-        const Sidebar(),
+        TimerPage(),
+        Sidebar(),
       ],
     );
   }

@@ -18,10 +18,10 @@ class SideBarControl extends ChangeNotifier {
 }
 
 class WhatTimer extends ChangeNotifier {
-  StatelessWidget page = const TimerPage();
+  StatelessWidget page = const ChimesTimerPage();
 
   toHome() {
-    page = const TimerPage();
+    page = const HomeTimerPage();
     debugPrint("Set Timer to Home!");
     notifyListeners();
   }
