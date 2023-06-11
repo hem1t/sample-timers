@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
 import 'package:timers/providers.dart';
@@ -21,7 +22,7 @@ class TimerPage extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: TextButton(
                 onPressed: context.read<SideBarControl>().gotoSidebar,
-                child: Icon(Icons.coronavirus, size: 35.r,))),
+                child: Icon(Icons.coronavirus, size: 50.r,).marginSymmetric(vertical: 18.h))),
       ],
     );
   }

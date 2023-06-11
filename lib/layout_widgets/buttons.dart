@@ -29,6 +29,7 @@ class ClearTextButton extends StatelessWidget {
       style: TextButton.styleFrom(
         fixedSize: Size(width, height),
         backgroundColor: Colors.transparent,
+        padding: EdgeInsets.symmetric(vertical: height * 0.1, horizontal: width * 0.1),
         shape: RoundedRectangleBorder(
           side: BorderSide(
             width: Rmin(2),

@@ -43,11 +43,20 @@ class Sidebar extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SidebarHead(),
+                  const Flexible(
+                    flex: 1,
+                    fit: FlexFit.loose,
+                    child: SidebarHead()),
                   gap,
-                  const SidebarTimerList(),
+                  const Flexible(
+                    flex: 5,
+                    fit: FlexFit.tight,
+                    child: SidebarTimerList()),
                   gap,
-                  const SidebarExit(),
+                  Flexible(
+                    flex: 1,
+                    fit: FlexFit.loose,
+                    child: const SidebarExit().marginOnly(right: 30.w)),
                 ],
               ))),
     )
@@ -69,6 +78,7 @@ class SidebarExit extends StatelessWidget {
         child: TextButton(
           onPressed: context.read<SideBarControl>().exitSidebar,
           style: TextButton.styleFrom(
+            padding: const EdgeInsets.all(0),
             backgroundColor: AppColors.sideHighlight,
             foregroundColor: AppColors.mainHighlight,
             shape: const CircleBorder(),
@@ -77,7 +87,7 @@ class SidebarExit extends StatelessWidget {
               angle: .75,
               child: Icon(
                 Icons.add,
-                size: 30.r,
+                size: 50.r,
               )),
         ));
   }

@@ -10,26 +10,16 @@ class ChimesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    textS(String text) {
-      return Text(
-        text,
-        style: TextStyle(
-            fontSize: 17.sp,
-            fontWeight: FontWeight.bold,
-            color: AppColors.contrastColor),
-      );
-    }
 
     return Container(
-        width: .65.sw,
+        width: .90.sw,
         alignment: Alignment.center,
         color: AppColors.backgroundColor.withOpacity(0.3),
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TimeField("Start:"),
+            TimeField("For:"),
             TimeField("Chime:"),
-            TimeField("Endat:"),
           ],
         ));
   }
@@ -48,19 +38,28 @@ class _TimeFieldState extends State<TimeField> {
   int minute = 0;
   int seconds = 0;
 
+    textS(String text) {
+    return Text(
+      text,
+      style: TextStyle(
+          fontSize: 20.sp,
+          fontWeight: FontWeight.bold,
+          color: AppColors.contrastColor),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     String timeString = Duration(hours: hour, minutes: minute, seconds: seconds).toString();
     return ClearTextButton(
-      height: 25.h,
-      width: .65.sw,
+      height: 45.h,
+      width: .88.sw,
       onPressed: () => {},
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(widget.label),
-          Text(
+          textS(widget.label),
+          textS(
             timeString.substring(0, timeString.indexOf('.')),
           )
         ],
