@@ -38,3 +38,7 @@ class WhatTimer extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+class CountDownController extends ChangeNotifier {
+  
+}

@@ -22,7 +22,10 @@ class TimerPage extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: TextButton(
                 onPressed: context.read<SideBarControl>().gotoSidebar,
-                child: Icon(Icons.coronavirus, size: 50.r,).marginSymmetric(vertical: 18.h))),
+                style: TextButton.styleFrom(
+                  
+                ),
+                child: Icon(Icons.more_vert_outlined, size: 40.r,))).marginSymmetric(vertical: 15.h, horizontal: 5.w),
       ],
     );
   }

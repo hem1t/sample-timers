@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:timers/color.dart';
 import 'package:timers/layout_widgets/buttons.dart';
+import 'package:timers/layout_widgets/fields.dart';
 import 'package:timers/tools/mm.dart';
 
 class ChimesPage extends StatelessWidget {
@@ -10,18 +11,29 @@ class ChimesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
         width: .90.sw,
         alignment: Alignment.center,
         color: AppColors.backgroundColor.withOpacity(0.3),
-        child: const Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            TimeField("For:"),
-            TimeField("Chime:"),
+            const CountDownField().marginOnly(top: 34.h),
+            const Column(
+              children: [
+                TimeField("Time:"),
+                TimeField("Chime:"),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                FilledTextButton(height: 35.h, width: 131.w, onPressed: ()=> {}, label: "Reset", fontSize: 30.r,),
+                FilledTextButton(height: 35.h, width: 131.w, onPressed: ()=> {}, label: "Start", fontSize: 30.r,)
+              ],
+            )
           ],
-        ));
+        ).paddingSymmetric(vertical: 53.h));
   }
 }
 
@@ -38,23 +50,27 @@ class _TimeFieldState extends State<TimeField> {
   int minute = 0;
   int seconds = 0;
 
-    textS(String text) {
+  textS(String text) {
     return Text(
       text,
       style: TextStyle(
-          fontSize: 20.sp,
+          fontSize: 25.sp,
           fontWeight: FontWeight.bold,
-          color: AppColors.contrastColor),
+          color: AppColors.mainHighlight,
+        ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    String timeString = Duration(hours: hour, minutes: minute, seconds: seconds).toString();
-    return ClearTextButton(
+    String timeString =
+        Duration(hours: hour, minutes: minute, seconds: seconds).toString();
+    return Container(
       height: 45.h,
       width: .88.sw,
-      onPressed: () => {},
+      decoration: BoxDecoration(
+        
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -63,7 +79,7 @@ class _TimeFieldState extends State<TimeField> {
             timeString.substring(0, timeString.indexOf('.')),
           )
         ],
-      ).paddingSymmetric(horizontal: Wmin(5)),
+      ).paddingSymmetric(horizontal: Wmin(17)),
     );
   }
 }
