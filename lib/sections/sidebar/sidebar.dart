@@ -34,12 +34,12 @@ class Sidebar extends StatelessWidget {
 
     return ClipRect(
       child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
           child: Container(
               height: Get.height,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 20.w),
-              color: AppColors.backgroundColor.withOpacity(0.43),
+              color: AppColors.backgroundColor.withOpacity(0.73),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
