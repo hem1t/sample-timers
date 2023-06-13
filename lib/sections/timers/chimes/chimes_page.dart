@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:timers/color.dart';
 import 'package:timers/layout_widgets/buttons.dart';
@@ -30,6 +31,7 @@ class ChimesPage extends StatelessWidget {
               children: [
                 FilledTextButton(height: 35.h, width: 131.w, onPressed: ()=> {}, label: "Reset", fontSize: 30.r,),
                 FilledTextButton(height: 35.h, width: 131.w, onPressed: ()=> {}, label: "Start", fontSize: 30.r,)
+                    Gap(10.h),
               ],
             )
           ],
