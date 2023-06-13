@@ -14,10 +14,6 @@ import 'timer_list.dart';
 const Duration animDur = Duration(milliseconds: 170);
 const Curve animCurv = Curves.decelerate;
 
-pixel(double p) {
-  return Get.pixelRatio * p;
-}
-
 const List<Effect> anim = <Effect>[
   ScaleEffect(duration: animDur, curve: animCurv),
   SlideEffect(duration: animDur, curve: animCurv),
