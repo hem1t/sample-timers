@@ -11,7 +11,8 @@ class CounterField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Duration time = context.watch<CounterFieldController>().current ?? 0.seconds;
+    Duration time =
+        context.watch<CounterFieldController>().current ?? 0.seconds;
     final style = TextStyle(
       fontSize: 65.sp,
       fontWeight: FontWeight.bold,
@@ -32,7 +33,7 @@ class CounterFieldController extends ChangeNotifier {
   Duration? endTime;
   Duration? current;
   Timer? timer;
-  int stepSecs = 0;
+  int stepSecs = 1;
 
   prepare(Duration time, Duration endTime, int stepSecs) {
     this.time = time;
@@ -42,13 +43,14 @@ class CounterFieldController extends ChangeNotifier {
 
   start() {
     current = time;
-    timer = Timer.periodic(stepSecs.seconds, (timer) {
+    timer = Timer.periodic(stepSecs.abs().seconds, (_) {
       if (current?.inSeconds == endTime?.inSeconds) {
         notifyListeners();
-        timer.cancel();
+        timer?.cancel();
       } else {
         current = (current ?? 0.seconds) + stepSecs.seconds;
         notifyListeners();
+        debugPrint("$current");
       }
     });
   }
@@ -58,13 +60,14 @@ class CounterFieldController extends ChangeNotifier {
   }
 
   resume() {
-    timer = Timer.periodic(stepSecs.seconds, (timer) {
+    timer = Timer.periodic(stepSecs.abs().seconds, (_) {
       if (current?.inSeconds == endTime?.inSeconds) {
         notifyListeners();
-        timer.cancel();
+        timer?.cancel();
       } else {
         current = (current ?? 0.seconds) + stepSecs.seconds;
         notifyListeners();
+        debugPrint("$current");
       }
     });
   }

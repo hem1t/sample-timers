@@ -3,10 +3,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
+import 'package:timers/layout_widgets/fields.dart';
 import 'package:timers/providers.dart';
 
 import 'chimes/chimes_page.dart';
 import 'pomodoro/pomodoro_page.dart';
+
+enum TimerState {
+  preRunning,
+  paused,
+  running,
+}
 
 class TimerPage extends StatelessWidget {
   const TimerPage({super.key});
@@ -22,10 +29,11 @@ class TimerPage extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: TextButton(
                 onPressed: context.read<SideBarControl>().gotoSidebar,
-                style: TextButton.styleFrom(
-                  
-                ),
-                child: Icon(Icons.more_vert_outlined, size: 40.r,))).marginSymmetric(vertical: 15.h, horizontal: 5.w),
+                style: TextButton.styleFrom(),
+                child: Icon(
+                  Icons.more_vert_outlined,
+                  size: 40.r,
+                ))).marginSymmetric(vertical: 15.h, horizontal: 5.w),
       ],
     );
   }
@@ -61,6 +69,12 @@ class ChimesTimerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ChimesPage();
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CounterFieldController()),
+        ChangeNotifierProvider(create: (_) => ChimesController()),
+      ],
+      child: const ChimesPage());
   }
 }
+

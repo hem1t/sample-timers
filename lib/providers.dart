@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:timers/sections/timers/timer_base.dart';
 
 class SideBarControl extends ChangeNotifier {
-  bool isSidebarOpen = true;
+  bool isSidebarOpen = false;
 
   gotoSidebar() {
     isSidebarOpen = true;

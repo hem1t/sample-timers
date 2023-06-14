@@ -53,8 +53,11 @@ class ChimesPage extends StatelessWidget {
                     FilledTextButton(
                       height: 35.h,
                       width: 131.w,
-                      onPressed: () => {
-                        context.read<CounterFieldController>().prepare(); 
+                      onPressed: () {
+                        context
+                            .read<CounterFieldController>()
+                            .prepare(1.minutes, 0.minutes, -1);
+                        context.read<CounterFieldController>().start();
                       },
                       label: "Start",
                       fontSize: 30.r,
