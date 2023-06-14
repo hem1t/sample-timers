@@ -18,6 +18,42 @@ class ChimesController extends ChangeNotifier {
   set setTimerState(TimerState state) => timerState = state;
   set setTime(Duration time) => time = time;
   set setChime(Duration chime) => chime = chime;
+
+  String chimeButtonLabel() {
+    switch (timerState) {
+      case TimerState.preRunning:
+        return "Start";
+      case TimerState.paused:
+        return "Resume";
+      case TimerState.running:
+        return "Pause";
+    }
+  }
+
+  chimeOnPressed(CounterFieldController counterField) {
+    switch (timerState) {
+      case TimerState.preRunning:
+        counterField.prepare(0.seconds, 20.seconds, 1);
+        timerState = TimerState.running;
+        counterField.start();
+        break;
+      case TimerState.running:
+        counterField.pause();
+        timerState = TimerState.paused;
+        break;
+      case TimerState.paused:
+        counterField.resume();
+        timerState = TimerState.running;
+        break;
+    }
+    notifyListeners();
+  }
+
+  chimeReset(CounterFieldController counterField) {
+    timerState = TimerState.preRunning;
+    counterField.reset();
+    notifyListeners();
+  }
 }
 
 class ChimesPage extends StatelessWidget {
@@ -25,6 +61,8 @@ class ChimesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final chimeController = context.read<ChimesController>();
+    final counterField = context.read<CounterFieldController>();
     return Container(
             width: .90.sw,
             alignment: Alignment.center,
@@ -46,20 +84,20 @@ class ChimesPage extends StatelessWidget {
                     FilledTextButton(
                       height: 35.h,
                       width: 131.w,
-                      onPressed: () => {},
+                      onPressed: () {
+                        chimeController.chimeReset(counterField);
+                      },
                       label: "Reset",
                       fontSize: 30.r,
                     ),
                     FilledTextButton(
                       height: 35.h,
-                      width: 131.w,
+                      width: 191.w,
                       onPressed: () {
-                        context
-                            .read<CounterFieldController>()
-                            .prepare(1.minutes, 0.minutes, -1);
-                        context.read<CounterFieldController>().start();
+                        chimeController.chimeOnPressed(counterField);
                       },
-                      label: "Start",
+                      label:
+                          context.watch<ChimesController>().chimeButtonLabel(),
                       fontSize: 30.r,
                     )
                   ],
