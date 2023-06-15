@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
-import 'package:timers/layout_widgets/fields.dart';
+import 'package:timers/layout_widgets/fields/counter_field.dart';
 import 'package:timers/providers.dart';
 
 import 'chimes/chimes_page.dart';
@@ -13,6 +13,7 @@ enum TimerState {
   preRunning,
   paused,
   running,
+  done,
 }
 
 class TimerPage extends StatelessWidget {

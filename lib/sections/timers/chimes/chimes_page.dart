@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -5,8 +6,8 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
 import 'package:timers/layout_widgets/buttons.dart';
-import 'package:timers/layout_widgets/fields.dart';
-import 'package:timers/tools/mm.dart';
+import 'package:timers/layout_widgets/fields/counter_field.dart';
+import 'package:timers/layout_widgets/fields/time_input_field.dart';
 
 import '../timer_base.dart';
 
@@ -27,15 +28,19 @@ class ChimesController extends ChangeNotifier {
         return "Resume";
       case TimerState.running:
         return "Pause";
+      case TimerState.done:
+        return "Start";
     }
   }
 
   chimeOnPressed(CounterFieldController counterField) {
     switch (timerState) {
       case TimerState.preRunning:
-        counterField.prepare(0.seconds, 20.seconds, 1);
-        timerState = TimerState.running;
-        counterField.start();
+        if (time > 0.seconds) {
+          counterField.prepare(0.seconds, time, 1);
+          timerState = TimerState.running;
+          counterField.start();
+        }
         break;
       case TimerState.running:
         counterField.pause();
@@ -45,7 +50,14 @@ class ChimesController extends ChangeNotifier {
         counterField.resume();
         timerState = TimerState.running;
         break;
+      case TimerState.done:
+        break;
     }
+    notifyListeners();
+  }
+
+  chimeComplete() {
+    timerState = TimerState.preRunning;
     notifyListeners();
   }
 
@@ -63,6 +75,9 @@ class ChimesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final chimeController = context.read<ChimesController>();
     final counterField = context.read<CounterFieldController>();
+    final player = AudioPlayer();
+    final chimeSound = AssetSource("chime.mp3");
+    final chimeEndSound = AssetSource("chimeEnd.mp3");
     return Container(
             width: .90.sw,
             alignment: Alignment.center,
@@ -70,12 +85,37 @@ class ChimesPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const CounterField(),
+                CounterField(
+                  onTick: (time) async {
+                    var chimeTime = chimeController.chime.inSeconds;
+                    var chimeTimeminusOne = chimeTime - 1;
+                    if (time >= chimeController.chime - 1.seconds &&
+                        time.inSeconds % chimeTime == chimeTimeminusOne &&
+                        chimeController.chime != 0.seconds &&
+                        time != chimeController.time - 1.seconds) {
+                      await player.play(chimeSound);
+                    }
+                  },
+                  onEnd: () async {
+                    chimeController.chimeComplete();
+                    await player.play(chimeEndSound);
+                  },
+                ),
                 Column(
                   children: [
-                    const TimeField("Time:"),
+                    TimeField(
+                      "Time:",
+                      onTimeSelect: (time) {
+                        chimeController.time = time;
+                      },
+                    ),
                     Gap(10.h),
-                    const TimeField("Chime:"),
+                    TimeField(
+                      "Chime:",
+                      onTimeSelect: (time) {
+                        chimeController.chime = time;
+                      },
+                    ),
                   ],
                 ),
                 Row(
@@ -105,61 +145,5 @@ class ChimesPage extends StatelessWidget {
               ],
             ).paddingSymmetric(vertical: 53.h))
         .marginOnly(top: 50.h);
-  }
-}
-
-class TimeField extends StatefulWidget {
-  final String label;
-  const TimeField(this.label, {super.key});
-
-  @override
-  State<TimeField> createState() => _TimeFieldState();
-}
-
-class _TimeFieldState extends State<TimeField> {
-  int hour = 0;
-  int minute = 0;
-  int seconds = 0;
-
-  textS(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontSize: 30.sp,
-        fontWeight: FontWeight.bold,
-        color: AppColors.contrastColor,
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String timeString =
-        Duration(hours: hour, minutes: minute, seconds: seconds).toString();
-    return Container(
-      height: 45.h,
-      width: .88.sw,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(width: Rmin(2), color: AppColors.mainHighlight)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          textS(widget.label),
-          textS(
-            timeString.substring(0, timeString.indexOf('.')),
-          )
-        ],
-      ).paddingSymmetric(horizontal: Wmin(17)),
-    );
-  }
-
-  // TODO
-  Future<void> _timeFieldDialog(BuildContext ctx) {
-    return showDialog<void>(
-        context: ctx,
-        builder: (BuildContext ctx) {
-          return AlertDialog();
-        });
   }
 }

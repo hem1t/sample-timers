@@ -7,13 +7,17 @@ import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
 
 class CounterField extends StatelessWidget {
-  const CounterField({super.key});
+  final void Function(Duration)? onTick;
+  final void Function()? onEnd;
+  const CounterField({super.key, this.onTick, this.onEnd});
 
   @override
   Widget build(BuildContext context) {
     Duration time =
         context.watch<CounterFieldController>().current ?? 0.seconds;
     int state = context.watch<CounterFieldController>().state;
+    context.read<CounterFieldController>().onTick = onTick;
+    context.read<CounterFieldController>().onEnd = onEnd;
     final style = TextStyle(
       fontSize: 65.sp,
       fontWeight: FontWeight.bold,
@@ -32,6 +36,8 @@ class CounterFieldController extends ChangeNotifier {
   Duration? time;
   Duration? endTime;
   Duration? current;
+  void Function(Duration)? onTick;
+  void Function()? onEnd;
   Timer? timer;
   int stepSecs = 1;
   int state = 0;
@@ -51,14 +57,19 @@ class CounterFieldController extends ChangeNotifier {
       if (current?.inSeconds == endTime?.inSeconds) {
         timer?.cancel();
         state = 0;
+        if (onEnd != null && time != endTime) {
+          onEnd!();
+        }
         notifyListeners();
       } else {
+        if (onTick != null) {
+          onTick!(current!);
+        }
         current = (current ?? 0.seconds) + stepSecs.seconds;
         notifyListeners();
         debugPrint("$current");
       }
     });
-    notifyListeners();
   }
 
   pause() {
@@ -71,15 +82,21 @@ class CounterFieldController extends ChangeNotifier {
     state = 1;
     timer = Timer.periodic(stepSecs.abs().seconds, (_) {
       if (current?.inSeconds == endTime?.inSeconds) {
-        notifyListeners();
         timer?.cancel();
+        state = 0;
+        if (onEnd != null && time != endTime) {
+          onEnd!();
+        }
+        notifyListeners();
       } else {
+        if (onTick != null) {
+          onTick!(current!);
+        }
         current = (current ?? 0.seconds) + stepSecs.seconds;
         notifyListeners();
         debugPrint("$current");
       }
     });
-    notifyListeners();
   }
 
   reset() {
