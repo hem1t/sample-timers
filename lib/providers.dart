@@ -18,7 +18,7 @@ class SideBarControl extends ChangeNotifier {
 }
 
 class WhatTimer extends ChangeNotifier {
-  StatelessWidget page = const ChimesTimerPage();
+  StatelessWidget page = const PomodoroTimerPage();
 
   toHome() {
     page = const HomeTimerPage();

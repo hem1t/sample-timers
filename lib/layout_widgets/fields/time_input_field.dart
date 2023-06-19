@@ -7,7 +7,16 @@ import 'package:timers/tools/mm.dart';
 class TimeField extends StatefulWidget {
   final String label;
   final void Function(Duration) onTimeSelect;
-  const TimeField(this.label, {super.key, required this.onTimeSelect});
+  final double height;
+  final double width;
+  final double textSize;
+  final Axis direction;
+  const TimeField(this.label,
+      {super.key,
+      required this.onTimeSelect,
+      required this.height,
+      required this.width,
+      required this.textSize, required this.direction});
 
   @override
   State<TimeField> createState() => _TimeFieldState();
@@ -22,7 +31,7 @@ class _TimeFieldState extends State<TimeField> {
     return Text(
       text,
       style: TextStyle(
-        fontSize: 30.sp,
+        fontSize: widget.textSize.sp,
         fontWeight: FontWeight.bold,
         color: AppColors.contrastColor,
       ),
@@ -36,12 +45,13 @@ class _TimeFieldState extends State<TimeField> {
         _timeFieldDialog(context);
       },
       child: Container(
-        height: 45.h,
-        width: .88.sw,
+        height: widget.height,
+        width: widget.width,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.r),
             border: Border.all(width: Rmin(2), color: AppColors.mainHighlight)),
-        child: Row(
+        child: Flex(
+          direction: widget.direction,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             textS(widget.label),
@@ -161,11 +171,13 @@ class TimeSpinner extends StatelessWidget {
   final void Function(int) onPageChanged;
   final int current;
   final int size;
+  final Axis? scrollDirection;
   const TimeSpinner(
       {super.key,
       required this.onPageChanged,
       required this.current,
-      required this.size});
+      required this.size,
+      this.scrollDirection});
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +188,7 @@ class TimeSpinner extends StatelessWidget {
         controller:
             PageController(viewportFraction: 0.35, initialPage: current),
         pageSnapping: true,
-        scrollDirection: Axis.vertical,
+        scrollDirection: scrollDirection ?? Axis.vertical,
         itemCount: size + 1,
         itemBuilder: (ctx, count) {
           return Center(

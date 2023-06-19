@@ -104,6 +104,10 @@ class ChimesPage extends StatelessWidget {
                 Column(
                   children: [
                     TimeField(
+                      height: 40.h,
+                      width: .88.sw,
+                      textSize: 30,
+                      direction: Axis.horizontal,
                       "Time:",
                       onTimeSelect: (time) {
                         chimeController.time = time;
@@ -111,6 +115,10 @@ class ChimesPage extends StatelessWidget {
                     ),
                     Gap(10.h),
                     TimeField(
+                      height: 40.h,
+                      width: .88.sw,
+                      textSize: 30,
+                      direction: Axis.horizontal,
                       "Chime:",
                       onTimeSelect: (time) {
                         chimeController.chime = time;
