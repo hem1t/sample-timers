@@ -14,52 +14,68 @@ enum PomoStatus { work, rest, longrest, idle }
 
 class PomodoroController extends ChangeNotifier {
   Duration passedtime = 0.seconds;
-  Duration worktime = 5.seconds;
-  Duration resttime = 3.seconds;
-  Duration longresttime = 7.seconds;
+  Duration worktime = 20.minutes;
+  Duration resttime = 5.minutes;
+  Duration longresttime = 10.minutes;
   double progressPercent = 1;
-  int originalPomoRepeat = 1;
-  int pomoRepeat = 1;
-  int originalSessionRepeat = 1;
-  int sessionRepeat = 1;
+  int originalPomoRepeat = 3;
+  int pomoRepeat = 3;
+  int originalSessionRepeat = 3;
+  int sessionRepeat = 3;
   PomoStatus status = PomoStatus.idle;
   TimerState timerState = TimerState.preRunning;
   Timer? timer;
 
   switchTimerState() {
     switch (timerState) {
-      case TimerState.preRunning || TimerState.paused || TimerState.done:
-        nextPomoStatus();
+      case TimerState.preRunning || TimerState.done:
         play();
         break;
+      case TimerState.paused:
+        startTimer();
+        break;
       case TimerState.running:
-        pause();
+        // pause();
+        stop();
         break;
     }
   }
 
   play() {
     timerState = TimerState.running;
-    Duration time = 1.seconds;
+    nextPomoStatus();
+    startTimer();
+  }
+
+  // use like resume ( play requires changing status, resume doesn't )
+  startTimer() {
+    timerState = TimerState.running;
+    Duration time = 500.milliseconds;
     timer = Timer.periodic(time, (t) {
-      debugPrint("$timerState $status $passedtime $progressPercent");
+      // debugPrint("$timerState $status $passedtime $progressPercent");
       passedtime += time;
       updateProgress();
       if (progressPercent > 1) {
         nextPomoStatus();
         if (status != PomoStatus.idle) {
-          debugPrint("While cancel? $status");
+          // debugPrint("While cancel? $status");
           t.cancel();
           play();
         } else {
-          pause();
+          stop();
         }
       }
     });
   }
 
-  pause() {
-    timerState = TimerState.paused;
+  // pause() {
+  //   timerState = TimerState.paused;
+  //   timer?.cancel();
+  //   notifyListeners();
+  // }
+
+  stop() {
+    timerState = progressPercent >= 1 ? TimerState.done : TimerState.paused;
     timer?.cancel();
     notifyListeners();
   }
@@ -102,7 +118,7 @@ class PomodoroController extends ChangeNotifier {
           status = PomoStatus.longrest;
         } else if (sessionRepeat == 1 && pomoRepeat == 1) {
           status = PomoStatus.idle;
-        } 
+        }
         sessionRepeat -= 1;
         passedtime = 0.seconds;
         break;
@@ -154,6 +170,7 @@ class PomodoroPage extends StatelessWidget {
                 debugPrint("Setting pomoWork to: $time");
                 pomoRead.worktime = time.minutes;
               },
+              current: 30,
             ),
             NumberField(
               height: .245.sw,
@@ -163,6 +180,7 @@ class PomodoroPage extends StatelessWidget {
                 debugPrint("Setting pomoRest to: $time");
                 pomoRead.resttime = time.minutes;
               },
+              current: 5,
             ),
             NumberField(
               height: .245.sw,
@@ -172,6 +190,7 @@ class PomodoroPage extends StatelessWidget {
                 debugPrint("Setting pomoLong to: $time");
                 pomoRead.longresttime = time.minutes;
               },
+              current: 15,
             ),
             NumberField(
               height: .245.sw,
@@ -182,6 +201,7 @@ class PomodoroPage extends StatelessWidget {
                 pomoRead.pomoRepeat = n;
                 pomoRead.originalPomoRepeat = n;
               },
+              current: 3,
             ),
             NumberField(
               height: .245.sw,
@@ -192,6 +212,7 @@ class PomodoroPage extends StatelessWidget {
                 pomoRead.sessionRepeat = n;
                 pomoRead.originalSessionRepeat = n;
               },
+              current: 3,
             ),
           ],
         ),
