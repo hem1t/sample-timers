@@ -64,7 +64,6 @@ class _TimeFieldState extends State<TimeField> {
     );
   }
 
-  // TODO
   Future<void> _timeFieldDialog(BuildContext ctx) {
     return showDialog<void>(
         barrierDismissible: false,

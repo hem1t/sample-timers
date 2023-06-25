@@ -1,22 +1,124 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
-import 'package:timers/layout_widgets/buttons.dart';
-import 'package:timers/layout_widgets/fields/counter_field.dart';
-import 'package:timers/layout_widgets/fields/time_input_field.dart';
-import 'package:timers/tools/mm.dart';
+import 'package:timers/layout_widgets/fields/number_input_field.dart';
+import 'package:timers/sections/timers/timer_base.dart';
+
+import 'pomostatus.dart';
+
+enum PomoStatus { work, rest, longrest, idle }
 
 class PomodoroController extends ChangeNotifier {
-  Duration worktime = 0.seconds;
-  Duration resttime = 0.seconds;
-  int repeat = 0;
-  PomoStatus status = const Idle();
+  Duration passedtime = 0.seconds;
+  Duration worktime = 5.seconds;
+  Duration resttime = 3.seconds;
+  Duration longresttime = 7.seconds;
+  double progressPercent = 1;
+  int originalPomoRepeat = 1;
+  int pomoRepeat = 1;
+  int originalSessionRepeat = 1;
+  int sessionRepeat = 1;
+  PomoStatus status = PomoStatus.idle;
+  TimerState timerState = TimerState.preRunning;
+  Timer? timer;
+
+  switchTimerState() {
+    switch (timerState) {
+      case TimerState.preRunning || TimerState.paused || TimerState.done:
+        nextPomoStatus();
+        play();
+        break;
+      case TimerState.running:
+        pause();
+        break;
+    }
+  }
+
+  play() {
+    timerState = TimerState.running;
+    Duration time = 1.seconds;
+    timer = Timer.periodic(time, (t) {
+      debugPrint("$timerState $status $passedtime $progressPercent");
+      passedtime += time;
+      updateProgress();
+      if (progressPercent > 1) {
+        nextPomoStatus();
+        if (status != PomoStatus.idle) {
+          debugPrint("While cancel? $status");
+          t.cancel();
+          play();
+        } else {
+          pause();
+        }
+      }
+    });
+  }
+
+  pause() {
+    timerState = TimerState.paused;
+    timer?.cancel();
+    notifyListeners();
+  }
 
   setStatus(PomoStatus value) {
     status = value;
+    notifyListeners();
+  }
+
+  // Increase by percent
+  updateProgress() {
+    switch (status) {
+      case PomoStatus.idle:
+        progressPercent = 1;
+        break;
+      case PomoStatus.work:
+        progressPercent =
+            passedtime.inMilliseconds / worktime.inMilliseconds + .001;
+        break;
+      case PomoStatus.rest:
+        progressPercent =
+            passedtime.inMilliseconds / resttime.inMilliseconds + .001;
+        break;
+      case PomoStatus.longrest:
+        progressPercent =
+            passedtime.inMilliseconds / longresttime.inMilliseconds + .001;
+        break;
+    }
+    notifyListeners();
+  }
+
+  nextPomoStatus() {
+    switch (status) {
+      case PomoStatus.work:
+        if (sessionRepeat > 1) {
+          status = PomoStatus.rest;
+        }
+        // isLastSession = sessionRepeat == 1;
+        else if (sessionRepeat == 1 && pomoRepeat > 1) {
+          status = PomoStatus.longrest;
+        } else if (sessionRepeat == 1 && pomoRepeat == 1) {
+          status = PomoStatus.idle;
+        } 
+        sessionRepeat -= 1;
+        passedtime = 0.seconds;
+        break;
+      case PomoStatus.rest || PomoStatus.longrest || PomoStatus.idle:
+        if (status == PomoStatus.longrest) {
+          pomoRepeat -= 1;
+          sessionRepeat = originalSessionRepeat;
+        }
+        if (status == PomoStatus.idle) {
+          pomoRepeat = originalPomoRepeat;
+          sessionRepeat = originalSessionRepeat;
+        }
+        status = PomoStatus.work;
+        passedtime = 0.seconds;
+        break;
+    }
     notifyListeners();
   }
 }
@@ -26,197 +128,74 @@ class PomodoroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pomodoro = context.read<PomodoroController>();
-    return Container(
-      height: Get.height,
-      width: Get.width,
-      alignment: Alignment.center,
-      color: AppColors.backgroundColor.withOpacity(0.3),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            children: [
-              PomodoroStatus(
-                status: context.watch<PomodoroController>().status,
-              ),
-              CounterField(
-                onTick: (time) {
-                  pomodoro.setStatus(Work(pomodoro.status.progress + .1));
-                },
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              NumberField(height: 55.h, width: .4.sw),
-              Gap(10.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TimeField(
-                      height: 60.h,
-                      width: .4.sw,
-                      textSize: 30,
-                      direction: Axis.vertical,
-                      "Work",
-                      onTimeSelect: (time) {}),
-                  TimeField(
-                      height: 60.h,
-                      width: .4.sw,
-                      textSize: 30,
-                      direction: Axis.vertical,
-                      "Rest",
-                      onTimeSelect: (time) {}),
-                ],
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FilledTextButton(
-                height: 30.h,
-                width: .36.sw,
-                onPressed: () {},
-                label: "Reset",
-                fontSize: 30.r,
-              ),
-              FilledTextButton(
-                height: 30.h,
-                width: .57.sw,
-                onPressed: () {
-                  context
-                      .read<CounterFieldController>()
-                      .prepare(0.seconds, 10.seconds, 1);
-                  context.read<CounterFieldController>().start();
-                },
-                label: "Start",
-                fontSize: 30.r,
-              )
-            ],
-          ),
-        ],
-      ).marginOnly(top: 70.h, bottom: 40.h),
-    );
-  }
-}
+    final pomoRead = context.read<PomodoroController>();
 
-class NumberField extends StatelessWidget {
-  final double height;
-  final double width;
-  const NumberField({super.key, required this.height, required this.width});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      width: width,
-      decoration: BoxDecoration(
-        border: Border.all(width: Rmin(2)),
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("Repeat",
-              style: TextStyle(
-                fontSize: 30.sp,
-                fontWeight: FontWeight.bold,
-                color: AppColors.contrastColor,
-              )),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ClearTextButton(height: 10.r, width: 10.r, onPressed: () {},
-                label: "<",
-              ),
-              SizedBox(height: 25.h,
-                width: 22,
-                child:
-              ListView.builder(
-                  itemCount: 10,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (ctx, count) {
-                    return Text(
-                      "$count",
-                      style: TextStyle(
-                        fontSize: 30.sp,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.contrastColor,
-                      ),
-                    );
-                  }),
-              ),
-              ClearTextButton(height: 10.r, width: 10.r, onPressed: () {}, label: ">",),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class PomoStatus {
-  const PomoStatus(this.progress);
-
-  final double progress;
-  String get message => "";
-  Color? get backgroundColor => Colors.grey;
-  Color? get color => null;
-}
-
-class Idle extends PomoStatus {
-  const Idle() : super(0);
-
-  @override
-  String get message => "Idle";
-}
-
-class Work extends PomoStatus {
-  final double p;
-  const Work(this.p) : super(p);
-
-  @override
-  String get message => "Work";
-  @override
-  Color? get backgroundColor => null;
-  @override
-  Color? get color => Colors.redAccent;
-}
-
-class Rest extends PomoStatus {
-  final double p;
-  const Rest(this.p) : super(p);
-
-  @override
-  String get message => "Rest";
-  @override
-  Color? get backgroundColor => null;
-  @override
-  Color? get color => Colors.orangeAccent;
-}
-
-class PomodoroStatus extends StatelessWidget {
-  final PomoStatus status;
-  const PomodoroStatus({super.key, required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-        height: 50.r,
-        width: 50.r,
-        child: Stack(
+    debugPrint("building pomo!");
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        PomodoroStatus(
+          onTap: () {
+            // Like, play/pause button.
+            pomoRead.switchTimerState();
+          },
+          size: 170,
+          color: AppColors.contrastColor,
+        ),
+        Wrap(
+          alignment: WrapAlignment.center,
           children: [
-            Center(child: Text(status.message)),
-            Center(
-              child: CircularProgressIndicator(
-                value: status.progress,
-                backgroundColor: status.backgroundColor,
-                color: status.color,
-              ),
+            NumberField(
+              height: .245.sw,
+              width: .245.sw,
+              context: "work",
+              onSelect: (time) {
+                debugPrint("Setting pomoWork to: $time");
+                pomoRead.worktime = time.minutes;
+              },
+            ),
+            NumberField(
+              height: .245.sw,
+              width: .245.sw,
+              context: "rest",
+              onSelect: (time) {
+                debugPrint("Setting pomoRest to: $time");
+                pomoRead.resttime = time.minutes;
+              },
+            ),
+            NumberField(
+              height: .245.sw,
+              width: .245.sw,
+              context: "long",
+              onSelect: (time) {
+                debugPrint("Setting pomoLong to: $time");
+                pomoRead.longresttime = time.minutes;
+              },
+            ),
+            NumberField(
+              height: .245.sw,
+              width: .4.sw,
+              context: "pomodoros",
+              onSelect: (n) {
+                debugPrint("Setting pomodoros to: $n");
+                pomoRead.pomoRepeat = n;
+                pomoRead.originalPomoRepeat = n;
+              },
+            ),
+            NumberField(
+              height: .245.sw,
+              width: .4.sw,
+              context: "sessions",
+              onSelect: (n) {
+                debugPrint("Setting sessions to: $n");
+                pomoRead.sessionRepeat = n;
+                pomoRead.originalSessionRepeat = n;
+              },
             ),
           ],
-        ));
+        ),
+      ],
+    );
   }
 }

@@ -61,11 +61,8 @@ class PomodoroTimerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => CounterFieldController()),
-        ChangeNotifierProvider(create: (_) => PomodoroController())
-      ],
+    return ChangeNotifierProvider(
+      create: (_) => PomodoroController(),
       child: const PomodoroPage());
   }
 }
