@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
 import 'package:timers/providers.dart';
 
-import 'head.dart';
 import 'timer_list.dart';
 
 const Duration animDur = Duration(milliseconds: 170);
@@ -40,15 +39,9 @@ class Sidebar extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Flexible(
-                    flex: 1,
-                    fit: FlexFit.loose,
-                    child: SidebarHead()),
-                  gap,
-                  const Flexible(
                     flex: 5,
                     fit: FlexFit.tight,
                     child: SidebarTimerList()),
-                  gap,
                   Flexible(
                     flex: 1,
                     fit: FlexFit.loose,

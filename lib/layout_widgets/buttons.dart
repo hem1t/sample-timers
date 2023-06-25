@@ -34,10 +34,10 @@ class ClearTextButton extends StatelessWidget {
             vertical: height * 0.1, horizontal: width * 0.1),
         shape: RoundedRectangleBorder(
           side: BorderSide(
-            width: Rmin(2),
+            width: Rmin(3),
             color: AppColors.hiddenHighlight,
           ),
-          borderRadius: BorderRadius.circular(8.r),
+          borderRadius: BorderRadius.circular(15.r),
         ),
       ),
       child: child ??

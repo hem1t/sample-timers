@@ -11,13 +11,15 @@ class SidebarTimerList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Wrap(
       alignment: WrapAlignment.start,
+      crossAxisAlignment: WrapCrossAlignment.start,
       children: [
         ClearTextButton(
             height: 35.h,
-            width: 122.w,
+            width: 162.w,
             onPressed: context.read<WhatTimer>().toHome,
             fontSize: 26.sp,
-            label: "Home"),
+            label: "Presets"),
+          SizedBox(width: .4.sw),
         ClearTextButton(
             height: 35.h,
             width: 155.w,
