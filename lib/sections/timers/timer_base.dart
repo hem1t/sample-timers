@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
 import 'package:timers/layout_widgets/fields/counter_field.dart';
 import 'package:timers/providers.dart';
+import 'package:timers/tools/mm.dart';
 
 import 'chimes/chimes_page.dart';
 import 'pomodoro/pomodoro_page.dart';
@@ -14,6 +15,18 @@ enum TimerState {
   paused,
   running,
   done,
+}
+
+Widget verticalStick(double width) {
+  return SizedBox(
+    height: 3,
+    width: width,
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(2),
+          color: AppColors.mainHighlight),
+    ),
+  );
 }
 
 class TimerPage extends StatelessWidget {
@@ -30,10 +43,13 @@ class TimerPage extends StatelessWidget {
             TextButton(
                 onPressed: context.read<SideBarControl>().gotoSidebar,
                 style: TextButton.styleFrom(),
-                child: Icon(
-                  Icons.more_vert_sharp,
-                  color: AppColors.mainHighlight,
-                  size: 40.r,
+                child: SizedBox(
+                  height: 38.r,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: List.generate(
+                          3, (i) => verticalStick(25))),
                 )),
             TextButton(
                 onPressed: () {},
