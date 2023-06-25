@@ -24,17 +24,27 @@ class TimerPage extends StatelessWidget {
     return Stack(
       children: [
         Center(child: context.watch<WhatTimer>().page),
-        Container(
-            height: 40.h,
-            width: .95.sw,
-            alignment: Alignment.centerLeft,
-            child: TextButton(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(
                 onPressed: context.read<SideBarControl>().gotoSidebar,
                 style: TextButton.styleFrom(),
                 child: Icon(
-                  Icons.more_vert_outlined,
+                  Icons.more_vert_sharp,
+                  color: AppColors.mainHighlight,
                   size: 40.r,
-                ))).marginSymmetric(vertical: 15.h, horizontal: 5.w),
+                )),
+            TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(),
+                child: Icon(
+                  Icons.add,
+                  color: AppColors.mainHighlight,
+                  size: 40.r,
+                ))
+          ],
+        ).marginSymmetric(horizontal: 7.w).marginOnly(top: 5.h)
       ],
     );
   }
@@ -62,8 +72,7 @@ class PomodoroTimerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => PomodoroController(),
-      child: const PomodoroPage());
+        create: (_) => PomodoroController(), child: const PomodoroPage());
   }
 }
 
@@ -72,12 +81,9 @@ class ChimesTimerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => CounterFieldController()),
-        ChangeNotifierProvider(create: (_) => ChimesController()),
-      ],
-      child: const ChimesPage());
+    return MultiProvider(providers: [
+      ChangeNotifierProvider(create: (_) => CounterFieldController()),
+      ChangeNotifierProvider(create: (_) => ChimesController()),
+    ], child: const ChimesPage());
   }
 }
-

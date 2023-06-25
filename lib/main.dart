@@ -27,12 +27,14 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
             primaryColor: AppColors.backgroundColor,
             shadowColor: AppColors.contrastColor),
-        home: Scaffold(
-            backgroundColor: AppColors.backgroundColor,
-            body: MultiProvider(providers: [
-              ChangeNotifierProvider(create: (_) => SideBarControl()),
-              ChangeNotifierProvider(create: (_) => WhatTimer())
-            ], child: const Timer())),
+        home: SafeArea(
+          child: Scaffold(
+              backgroundColor: AppColors.backgroundColor,
+              body: MultiProvider(providers: [
+                ChangeNotifierProvider(create: (_) => SideBarControl()),
+                ChangeNotifierProvider(create: (_) => WhatTimer())
+              ], child: const Timer())),
+        ),
       );
     });
   }
