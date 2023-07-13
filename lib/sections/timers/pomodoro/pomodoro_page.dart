@@ -154,7 +154,7 @@ class PomodoroPage extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       children: [
         TimerHead(onAdd: (String name) {
-            context.read<IsarService>().savePreset(name, "pomo", [
+            context.read<IsarService>().savePreset(name, "pomodoro", [
             pomoRead.worktime.inMinutes,
             pomoRead.resttime.inMinutes,
             pomoRead.longresttime.inMinutes,

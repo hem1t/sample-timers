@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:timers/color.dart';
 import 'package:timers/db/isar_services.dart';
 import 'package:timers/layout_widgets/buttons.dart';
 import 'package:timers/layout_widgets/fields/counter_field.dart';

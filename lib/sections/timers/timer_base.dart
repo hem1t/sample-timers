@@ -9,6 +9,7 @@ import 'package:timers/providers.dart';
 
 import 'chimes/chimes_page.dart';
 import 'pomodoro/pomodoro_page.dart';
+import 'presets_view.dart';
 
 enum TimerState {
   preRunning,
@@ -72,39 +73,6 @@ class TimerPage extends StatelessWidget {
   }
 }
 
-class PresetsPage extends StatelessWidget {
-  const PresetsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TimerHead(
-          onAdd: (name) {},
-        ),
-        StreamBuilder(
-            stream: context.read<IsarService>().getPresets(),
-            builder: (context, stream) {
-              if (stream.hasData) {
-                var data = stream.data ?? [];
-                return Expanded(
-                  child: ListView.builder(
-                      itemCount: data.length,
-                      itemBuilder: (context, index) {
-                        return Text(data[index].timerCode.toString());
-                      }),
-                );
-              } else {
-                return const Expanded(
-                  child: Center(child: Text("No Preset!!!")),
-                );
-              }
-            }),
-      ],
-    );
-  }
-}
-
 class PomodoroTimerPage extends StatelessWidget {
   const PomodoroTimerPage({super.key});
 
@@ -133,3 +101,37 @@ class ChimesTimerPage extends StatelessWidget {
         [chimeRead.time.inSeconds, chimeRead.chime.inSeconds]);
   }
 }
+
+class PresetsPage extends StatelessWidget {
+  const PresetsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TimerHead(
+          onAdd: (name) {},
+        ),
+        StreamBuilder(
+            stream: context.read<IsarService>().getPresets(),
+            builder: (context, stream) {
+              if (stream.hasData) {
+                var data = stream.data ?? [];
+                return Expanded(
+                  child: ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        return PresetView(preset: data[index]);
+                      }),
+                );
+              } else {
+                return const Expanded(
+                  child: Center(child: Text("No Preset!!!")),
+                );
+              }
+            }),
+      ],
+    );
+  }
+}
+
