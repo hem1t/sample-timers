@@ -6,11 +6,17 @@ class Presets {
   Id id = Isar.autoIncrement;
 
   @Index(unique: true)
-  String? presetName;
+  late String presetName;
 
-  String? timerCode;
+  @enumerated
+  late TimerCode timerCode;
 
-  List<int>? timerVals;
+  late List<int> timerVals;
+}
+
+enum TimerCode {
+  pomo,
+  chime
 }
 
 // Won't work with super class

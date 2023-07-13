@@ -21,7 +21,7 @@ class IsarService extends ChangeNotifier {
   }
 
   Future<void> savePreset(
-      String presetName, String timerCode, List<int> vals) async {
+      String presetName, TimerCode timerCode, List<int> vals) async {
     final isar = await db;
     final preset = Presets()
       ..presetName = presetName

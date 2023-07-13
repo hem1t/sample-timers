@@ -13,9 +13,9 @@ class PresetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final presetName = preset.presetName!;
-    final timerCode = preset.timerCode!;
-    final vals = preset.timerVals!;
+    final presetName = preset.presetName;
+    final timerCode = preset.timerCode;
+    final vals = preset.timerVals;
     final presetNameTextStyle = GoogleFonts.spaceMono(
         textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp));
     return Container(
@@ -52,14 +52,14 @@ class PresetView extends StatelessWidget {
   }
 }
 
-List<Widget> timerValsListView(String timerCode, List<int> vals) {
+List<Widget> timerValsListView(TimerCode timerCode, List<int> vals) {
   var decoration = BoxDecoration(
     border: Border.all(width: Rmin(2), color: AppColors.contrastColor),
     borderRadius: BorderRadius.circular(Rmin(7)),
   );
   return List.generate(vals.length, (index) {
     switch (timerCode) {
-      case 'pomo':
+      case TimerCode.pomo:
         return Container(
           height: Rmin(30),
           width: Rmin(30),
@@ -68,7 +68,7 @@ List<Widget> timerValsListView(String timerCode, List<int> vals) {
           alignment: Alignment.center,
           child: Text(vals[index].toString()),
         );
-      case 'chime':
+      case TimerCode.chime:
         return Container(
           height: Rmin(30),
           width: Rmin(100),
@@ -77,18 +77,17 @@ List<Widget> timerValsListView(String timerCode, List<int> vals) {
           alignment: Alignment.center,
           child: Text(vals[index].seconds.toText),
         );
-      default:
-        return const Text("n");
     }
   });
 }
 
 class TimerCodeTag extends StatelessWidget {
-  final String name;
+  final TimerCode name;
   const TimerCodeTag({super.key, required this.name});
 
   @override
   Widget build(BuildContext context) {
+    var name = this.name.toString().substring(10);
     return Container(
         width: Rmin(name.length * 12),
         height: 18.h,

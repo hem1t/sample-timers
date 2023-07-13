@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:timers/db/entities/presets.dart';
 import 'package:timers/db/isar_services.dart';
 import 'package:timers/layout_widgets/buttons.dart';
 import 'package:timers/layout_widgets/fields/counter_field.dart';
@@ -83,7 +84,7 @@ class ChimesPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
     TimerHead(onAdd: (name) {
-          context.read<IsarService>().savePreset(name, 'chime', [
+          context.read<IsarService>().savePreset(name, TimerCode.chime, [
             chimeController.time.inSeconds,
             chimeController.chime.inSeconds
           ]);

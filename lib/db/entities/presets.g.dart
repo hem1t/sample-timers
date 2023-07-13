@@ -25,7 +25,8 @@ const PresetsSchema = CollectionSchema(
     r'timerCode': PropertySchema(
       id: 1,
       name: r'timerCode',
-      type: IsarType.string,
+      type: IsarType.byte,
+      enumMap: _PresetstimerCodeEnumValueMap,
     ),
     r'timerVals': PropertySchema(
       id: 2,
@@ -38,7 +39,21 @@ const PresetsSchema = CollectionSchema(
   deserialize: _presetsDeserialize,
   deserializeProp: _presetsDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'presetName': IndexSchema(
+      id: -457108311343499266,
+      name: r'presetName',
+      unique: true,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'presetName',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    )
+  },
   links: {},
   embeddedSchemas: {},
   getId: _presetsGetId,
@@ -53,24 +68,8 @@ int _presetsEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  {
-    final value = object.presetName;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.timerCode;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.timerVals;
-    if (value != null) {
-      bytesCount += 3 + value.length * 8;
-    }
-  }
+  bytesCount += 3 + object.presetName.length * 3;
+  bytesCount += 3 + object.timerVals.length * 8;
   return bytesCount;
 }
 
@@ -81,7 +80,7 @@ void _presetsSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.presetName);
-  writer.writeString(offsets[1], object.timerCode);
+  writer.writeByte(offsets[1], object.timerCode.index);
   writer.writeLongList(offsets[2], object.timerVals);
 }
 
@@ -93,9 +92,11 @@ Presets _presetsDeserialize(
 ) {
   final object = Presets();
   object.id = id;
-  object.presetName = reader.readStringOrNull(offsets[0]);
-  object.timerCode = reader.readStringOrNull(offsets[1]);
-  object.timerVals = reader.readLongList(offsets[2]);
+  object.presetName = reader.readString(offsets[0]);
+  object.timerCode =
+      _PresetstimerCodeValueEnumMap[reader.readByteOrNull(offsets[1])] ??
+          TimerCode.pomo;
+  object.timerVals = reader.readLongList(offsets[2]) ?? [];
   return object;
 }
 
@@ -107,15 +108,25 @@ P _presetsDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
+      return (_PresetstimerCodeValueEnumMap[reader.readByteOrNull(offset)] ??
+          TimerCode.pomo) as P;
     case 2:
-      return (reader.readLongList(offset)) as P;
+      return (reader.readLongList(offset) ?? []) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _PresetstimerCodeEnumValueMap = {
+  'pomo': 0,
+  'chime': 1,
+};
+const _PresetstimerCodeValueEnumMap = {
+  0: TimerCode.pomo,
+  1: TimerCode.chime,
+};
 
 Id _presetsGetId(Presets object) {
   return object.id;
@@ -127,6 +138,61 @@ List<IsarLinkBase<dynamic>> _presetsGetLinks(Presets object) {
 
 void _presetsAttach(IsarCollection<dynamic> col, Id id, Presets object) {
   object.id = id;
+}
+
+extension PresetsByIndex on IsarCollection<Presets> {
+  Future<Presets?> getByPresetName(String presetName) {
+    return getByIndex(r'presetName', [presetName]);
+  }
+
+  Presets? getByPresetNameSync(String presetName) {
+    return getByIndexSync(r'presetName', [presetName]);
+  }
+
+  Future<bool> deleteByPresetName(String presetName) {
+    return deleteByIndex(r'presetName', [presetName]);
+  }
+
+  bool deleteByPresetNameSync(String presetName) {
+    return deleteByIndexSync(r'presetName', [presetName]);
+  }
+
+  Future<List<Presets?>> getAllByPresetName(List<String> presetNameValues) {
+    final values = presetNameValues.map((e) => [e]).toList();
+    return getAllByIndex(r'presetName', values);
+  }
+
+  List<Presets?> getAllByPresetNameSync(List<String> presetNameValues) {
+    final values = presetNameValues.map((e) => [e]).toList();
+    return getAllByIndexSync(r'presetName', values);
+  }
+
+  Future<int> deleteAllByPresetName(List<String> presetNameValues) {
+    final values = presetNameValues.map((e) => [e]).toList();
+    return deleteAllByIndex(r'presetName', values);
+  }
+
+  int deleteAllByPresetNameSync(List<String> presetNameValues) {
+    final values = presetNameValues.map((e) => [e]).toList();
+    return deleteAllByIndexSync(r'presetName', values);
+  }
+
+  Future<Id> putByPresetName(Presets object) {
+    return putByIndex(r'presetName', object);
+  }
+
+  Id putByPresetNameSync(Presets object, {bool saveLinks = true}) {
+    return putByIndexSync(r'presetName', object, saveLinks: saveLinks);
+  }
+
+  Future<List<Id>> putAllByPresetName(List<Presets> objects) {
+    return putAllByIndex(r'presetName', objects);
+  }
+
+  List<Id> putAllByPresetNameSync(List<Presets> objects,
+      {bool saveLinks = true}) {
+    return putAllByIndexSync(r'presetName', objects, saveLinks: saveLinks);
+  }
 }
 
 extension PresetsQueryWhereSort on QueryBuilder<Presets, Presets, QWhere> {
@@ -202,6 +268,51 @@ extension PresetsQueryWhere on QueryBuilder<Presets, Presets, QWhereClause> {
       ));
     });
   }
+
+  QueryBuilder<Presets, Presets, QAfterWhereClause> presetNameEqualTo(
+      String presetName) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'presetName',
+        value: [presetName],
+      ));
+    });
+  }
+
+  QueryBuilder<Presets, Presets, QAfterWhereClause> presetNameNotEqualTo(
+      String presetName) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'presetName',
+              lower: [],
+              upper: [presetName],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'presetName',
+              lower: [presetName],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'presetName',
+              lower: [presetName],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'presetName',
+              lower: [],
+              upper: [presetName],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
 }
 
 extension PresetsQueryFilter
@@ -258,24 +369,8 @@ extension PresetsQueryFilter
     });
   }
 
-  QueryBuilder<Presets, Presets, QAfterFilterCondition> presetNameIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'presetName',
-      ));
-    });
-  }
-
-  QueryBuilder<Presets, Presets, QAfterFilterCondition> presetNameIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'presetName',
-      ));
-    });
-  }
-
   QueryBuilder<Presets, Presets, QAfterFilterCondition> presetNameEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -288,7 +383,7 @@ extension PresetsQueryFilter
   }
 
   QueryBuilder<Presets, Presets, QAfterFilterCondition> presetNameGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -303,7 +398,7 @@ extension PresetsQueryFilter
   }
 
   QueryBuilder<Presets, Presets, QAfterFilterCondition> presetNameLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -318,8 +413,8 @@ extension PresetsQueryFilter
   }
 
   QueryBuilder<Presets, Presets, QAfterFilterCondition> presetNameBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -404,71 +499,47 @@ extension PresetsQueryFilter
     });
   }
 
-  QueryBuilder<Presets, Presets, QAfterFilterCondition> timerCodeIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'timerCode',
-      ));
-    });
-  }
-
-  QueryBuilder<Presets, Presets, QAfterFilterCondition> timerCodeIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'timerCode',
-      ));
-    });
-  }
-
   QueryBuilder<Presets, Presets, QAfterFilterCondition> timerCodeEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+      TimerCode value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'timerCode',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Presets, Presets, QAfterFilterCondition> timerCodeGreaterThan(
-    String? value, {
+    TimerCode value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'timerCode',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Presets, Presets, QAfterFilterCondition> timerCodeLessThan(
-    String? value, {
+    TimerCode value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'timerCode',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Presets, Presets, QAfterFilterCondition> timerCodeBetween(
-    String? lower,
-    String? upper, {
+    TimerCode lower,
+    TimerCode upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -477,91 +548,6 @@ extension PresetsQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Presets, Presets, QAfterFilterCondition> timerCodeStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'timerCode',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Presets, Presets, QAfterFilterCondition> timerCodeEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'timerCode',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Presets, Presets, QAfterFilterCondition> timerCodeContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'timerCode',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Presets, Presets, QAfterFilterCondition> timerCodeMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'timerCode',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Presets, Presets, QAfterFilterCondition> timerCodeIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'timerCode',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Presets, Presets, QAfterFilterCondition> timerCodeIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'timerCode',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Presets, Presets, QAfterFilterCondition> timerValsIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'timerVals',
-      ));
-    });
-  }
-
-  QueryBuilder<Presets, Presets, QAfterFilterCondition> timerValsIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'timerVals',
       ));
     });
   }
@@ -787,10 +773,9 @@ extension PresetsQueryWhereDistinct
     });
   }
 
-  QueryBuilder<Presets, Presets, QDistinct> distinctByTimerCode(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Presets, Presets, QDistinct> distinctByTimerCode() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'timerCode', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'timerCode');
     });
   }
 
@@ -809,19 +794,19 @@ extension PresetsQueryProperty
     });
   }
 
-  QueryBuilder<Presets, String?, QQueryOperations> presetNameProperty() {
+  QueryBuilder<Presets, String, QQueryOperations> presetNameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'presetName');
     });
   }
 
-  QueryBuilder<Presets, String?, QQueryOperations> timerCodeProperty() {
+  QueryBuilder<Presets, TimerCode, QQueryOperations> timerCodeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'timerCode');
     });
   }
 
-  QueryBuilder<Presets, List<int>?, QQueryOperations> timerValsProperty() {
+  QueryBuilder<Presets, List<int>, QQueryOperations> timerValsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'timerVals');
     });

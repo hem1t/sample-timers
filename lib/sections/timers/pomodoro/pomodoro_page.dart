@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
+import 'package:timers/db/entities/presets.dart';
 import 'package:timers/db/isar_services.dart';
 import 'package:timers/layout_widgets/fields/number_input_field.dart';
 import 'package:timers/sections/timers/timer_base.dart';
@@ -154,7 +155,7 @@ class PomodoroPage extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       children: [
         TimerHead(onAdd: (String name) {
-            context.read<IsarService>().savePreset(name, "pomodoro", [
+            context.read<IsarService>().savePreset(name, TimerCode.pomo, [
             pomoRead.worktime.inMinutes,
             pomoRead.resttime.inMinutes,
             pomoRead.longresttime.inMinutes,
