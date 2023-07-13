@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
+import 'package:timers/db/isar_services.dart';
 import 'package:timers/layout_widgets/fields/number_input_field.dart';
 import 'package:timers/sections/timers/timer_base.dart';
 
@@ -18,9 +20,9 @@ class PomodoroController extends ChangeNotifier {
   Duration resttime = 5.minutes;
   Duration longresttime = 10.minutes;
   double progressPercent = 1;
-  int originalPomoRepeat = 3;
+  int persistentPomoRepeat = 3;
   int pomoRepeat = 3;
-  int originalSessionRepeat = 3;
+  int persistentSessionRepeat = 3;
   int sessionRepeat = 3;
   PomoStatus status = PomoStatus.idle;
   TimerState timerState = TimerState.preRunning;
@@ -54,8 +56,7 @@ class PomodoroController extends ChangeNotifier {
     timer = Timer.periodic(time, (t) {
       // debugPrint("$timerState $status $passedtime $progressPercent");
       passedtime += time;
-      updateProgress();
-      if (progressPercent > 1) {
+      if (updateProgress() > 1) {
         nextPomoStatus();
         if (status != PomoStatus.idle) {
           // debugPrint("While cancel? $status");
@@ -75,7 +76,7 @@ class PomodoroController extends ChangeNotifier {
   // }
 
   stop() {
-    timerState = progressPercent >= 1 ? TimerState.done : TimerState.paused;
+    timerState = updateProgress() >= 1 ? TimerState.done : TimerState.paused;
     timer?.cancel();
     notifyListeners();
   }
@@ -85,8 +86,8 @@ class PomodoroController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Increase by percent
-  updateProgress() {
+  // Increase by percent and also return a copy.
+  double updateProgress() {
     switch (status) {
       case PomoStatus.idle:
         progressPercent = 1;
@@ -105,6 +106,7 @@ class PomodoroController extends ChangeNotifier {
         break;
     }
     notifyListeners();
+    return progressPercent;
   }
 
   nextPomoStatus() {
@@ -125,11 +127,11 @@ class PomodoroController extends ChangeNotifier {
       case PomoStatus.rest || PomoStatus.longrest || PomoStatus.idle:
         if (status == PomoStatus.longrest) {
           pomoRepeat -= 1;
-          sessionRepeat = originalSessionRepeat;
+          sessionRepeat = persistentSessionRepeat;
         }
         if (status == PomoStatus.idle) {
-          pomoRepeat = originalPomoRepeat;
-          sessionRepeat = originalSessionRepeat;
+          pomoRepeat = persistentPomoRepeat;
+          sessionRepeat = persistentSessionRepeat;
         }
         status = PomoStatus.work;
         passedtime = 0.seconds;
@@ -148,9 +150,18 @@ class PomodoroPage extends StatelessWidget {
 
     debugPrint("building pomo!");
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       mainAxisSize: MainAxisSize.max,
       children: [
+        TimerHead(onAdd: (String name) {
+            context.read<IsarService>().savePreset(name, "pomo", [
+            pomoRead.worktime.inMinutes,
+            pomoRead.resttime.inMinutes,
+            pomoRead.longresttime.inMinutes,
+            pomoRead.persistentPomoRepeat,
+            pomoRead.persistentSessionRepeat
+          ]);
+        }).marginOnly(top: 10.r),
         PomodoroStatus(
           onTap: () {
             // Like, play/pause button.
@@ -159,6 +170,7 @@ class PomodoroPage extends StatelessWidget {
           size: 170,
           color: AppColors.contrastColor,
         ),
+        Gap(1.r),
         Wrap(
           alignment: WrapAlignment.center,
           children: [
@@ -199,7 +211,7 @@ class PomodoroPage extends StatelessWidget {
               onSelect: (n) {
                 debugPrint("Setting pomodoros to: $n");
                 pomoRead.pomoRepeat = n;
-                pomoRead.originalPomoRepeat = n;
+                pomoRead.persistentPomoRepeat = n;
               },
               current: 3,
             ),
@@ -210,12 +222,12 @@ class PomodoroPage extends StatelessWidget {
               onSelect: (n) {
                 debugPrint("Setting sessions to: $n");
                 pomoRead.sessionRepeat = n;
-                pomoRead.originalSessionRepeat = n;
+                pomoRead.persistentSessionRepeat = n;
               },
               current: 3,
             ),
           ],
-        ),
+        ).marginOnly(bottom: 69.r),
       ],
     );
   }

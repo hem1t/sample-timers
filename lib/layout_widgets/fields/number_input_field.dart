@@ -27,7 +27,6 @@ class _NumberFieldState extends State<NumberField> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     current = widget.current != null? widget.current! - 1: 0;
   }

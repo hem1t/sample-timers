@@ -21,7 +21,7 @@ class WhatTimer extends ChangeNotifier {
   StatelessWidget page = const PomodoroTimerPage();
 
   toHome() {
-    page = const HomeTimerPage();
+    page = const PresetsPage();
     debugPrint("Set Timer to Home!");
     notifyListeners();
   }
@@ -38,4 +38,3 @@ class WhatTimer extends ChangeNotifier {
     notifyListeners();
   }
 }
-

@@ -39,3 +39,5 @@ double Wmin(double l) {
 // double Wmm(double l) {
 //   return l.r <= l ? l.r : l;
 // }
+
+

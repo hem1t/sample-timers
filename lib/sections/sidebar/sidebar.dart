@@ -25,7 +25,6 @@ class Sidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     final double sideBar =
         context.select((SideBarControl a) => a.isSidebarOpen) ? 1 : 0;
-    final SizedBox gap = SizedBox(height: 30.h);
 
     return ClipRect(
       child: BackdropFilter(
