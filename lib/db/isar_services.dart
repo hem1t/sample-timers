@@ -28,7 +28,6 @@ class IsarService extends ChangeNotifier {
       ..timerCode = timerCode
       ..timerVals = vals;
     isar.writeTxn(() => isar.presets.put(preset));
-    notifyListeners();
   }
 
   Stream<List<Presets>> getPresets() async* {
