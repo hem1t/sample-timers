@@ -10,6 +10,7 @@ import 'package:timers/db/entities/presets.dart';
 import 'package:timers/db/isar_services.dart';
 import 'package:timers/layout_widgets/fields/number_input_field.dart';
 import 'package:timers/sections/timers/timer_base.dart';
+import 'package:timers/tools/extensions.dart';
 
 import 'pomostatus.dart';
 
@@ -28,6 +29,14 @@ class PomodoroController extends ChangeNotifier {
   PomoStatus status = PomoStatus.idle;
   TimerState timerState = TimerState.preRunning;
   Timer? timer;
+
+  PomodoroController(List<int> vals) {
+    worktime = (vals.getn(0) ?? 30).minutes;
+    resttime = (vals.getn(1) ?? 5).minutes;
+    longresttime = (vals.getn(2) ?? 10).minutes;
+    persistentPomoRepeat = vals.getn(3) ?? 3;
+    persistentSessionRepeat = vals.getn(4) ?? 3;
+  }
 
   switchTimerState() {
     switch (timerState) {
@@ -155,7 +164,7 @@ class PomodoroPage extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       children: [
         TimerHead(onAdd: (String name) {
-            context.read<IsarService>().savePreset(name, TimerCode.pomo, [
+          context.read<IsarService>().savePreset(name, TimerCode.pomo, [
             pomoRead.worktime.inMinutes,
             pomoRead.resttime.inMinutes,
             pomoRead.longresttime.inMinutes,
@@ -183,7 +192,7 @@ class PomodoroPage extends StatelessWidget {
                 debugPrint("Setting pomoWork to: $time");
                 pomoRead.worktime = time.minutes;
               },
-              current: 30,
+              current: pomoRead.worktime.inMinutes,
             ),
             NumberField(
               height: .245.sw,
@@ -193,7 +202,7 @@ class PomodoroPage extends StatelessWidget {
                 debugPrint("Setting pomoRest to: $time");
                 pomoRead.resttime = time.minutes;
               },
-              current: 5,
+              current: pomoRead.resttime.inMinutes,
             ),
             NumberField(
               height: .245.sw,
@@ -203,7 +212,7 @@ class PomodoroPage extends StatelessWidget {
                 debugPrint("Setting pomoLong to: $time");
                 pomoRead.longresttime = time.minutes;
               },
-              current: 15,
+              current: pomoRead.longresttime.inMinutes,
             ),
             NumberField(
               height: .245.sw,
@@ -214,7 +223,7 @@ class PomodoroPage extends StatelessWidget {
                 pomoRead.pomoRepeat = n;
                 pomoRead.persistentPomoRepeat = n;
               },
-              current: 3,
+              current: pomoRead.persistentPomoRepeat,
             ),
             NumberField(
               height: .245.sw,
@@ -225,7 +234,7 @@ class PomodoroPage extends StatelessWidget {
                 pomoRead.sessionRepeat = n;
                 pomoRead.persistentSessionRepeat = n;
               },
-              current: 3,
+              current: pomoRead.persistentSessionRepeat,
             ),
           ],
         ).marginOnly(bottom: 69.r),

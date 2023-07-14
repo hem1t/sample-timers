@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
-import 'package:timers/db/entities/presets.dart';
 import 'package:timers/db/isar_services.dart';
 import 'package:timers/layout_widgets/fields/counter_field.dart';
 import 'package:timers/providers.dart';
@@ -75,31 +74,27 @@ class TimerPage extends StatelessWidget {
 }
 
 class PomodoroTimerPage extends StatelessWidget {
-  const PomodoroTimerPage({super.key});
+  final List<int> vals;
+  const PomodoroTimerPage({super.key, required this.vals});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (_) => PomodoroController(), child: const PomodoroPage());
+        create: (_) => PomodoroController(vals),
+        child: const PomodoroPage());
   }
 }
 
 class ChimesTimerPage extends StatelessWidget {
-  const ChimesTimerPage({super.key});
+  final List<int> vals;
+  const ChimesTimerPage({super.key, required this.vals});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
       ChangeNotifierProvider(create: (_) => CounterFieldController()),
-      ChangeNotifierProvider(create: (_) => ChimesController()),
+      ChangeNotifierProvider(create: (_) => ChimesController(vals)),
     ], child: const ChimesPage());
-  }
-
-  onPresetAdd(BuildContext context, String presetName) {
-    final chimeRead = context.read<ChimesController>();
-
-    IsarService().savePreset(presetName, TimerCode.chime,
-        [chimeRead.time.inSeconds, chimeRead.chime.inSeconds]);
   }
 }
 
@@ -135,4 +130,3 @@ class PresetsPage extends StatelessWidget {
     );
   }
 }
-

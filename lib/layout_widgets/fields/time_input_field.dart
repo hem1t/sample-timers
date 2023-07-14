@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:timers/color.dart';
+import 'package:timers/tools/extensions.dart';
 import 'package:timers/tools/mm.dart';
 
 class TimeField extends StatefulWidget {
@@ -11,12 +12,15 @@ class TimeField extends StatefulWidget {
   final double width;
   final double textSize;
   final Axis direction;
+  final Duration current;
   const TimeField(this.label,
       {super.key,
       required this.onTimeSelect,
       required this.height,
       required this.width,
-      required this.textSize, required this.direction});
+      required this.textSize,
+      required this.direction,
+      required this.current});
 
   @override
   State<TimeField> createState() => _TimeFieldState();
@@ -24,9 +28,12 @@ class TimeField extends StatefulWidget {
 
 class _TimeFieldState extends State<TimeField> {
   Duration? pickerTime;
+  @override
+  void initState() {
+    super.initState();
+    pickerTime = widget.current;
+  }
 
-  String timeString =
-      const Duration(hours: 0, minutes: 0, seconds: 0).toString();
   textS(String text) {
     return Text(
       text,
@@ -56,7 +63,7 @@ class _TimeFieldState extends State<TimeField> {
           children: [
             textS(widget.label),
             textS(
-              timeString.substring(0, timeString.indexOf('.')),
+              pickerTime!.toText
             )
           ],
         ).paddingSymmetric(horizontal: Wmin(17)),
@@ -74,7 +81,7 @@ class _TimeFieldState extends State<TimeField> {
               time: pickerTime ?? 0.seconds,
               onTimeChange: (time) {
                 setState(() {
-                  timeString = time.toString();
+                  pickerTime = time;
                 });
                 pickerTime = time;
               },

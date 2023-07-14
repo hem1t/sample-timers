@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
 import 'package:timers/db/entities/presets.dart';
-import 'package:timers/tools/duration_extension.dart';
+import 'package:timers/db/isar_services.dart';
+import 'package:timers/providers.dart';
+import 'package:timers/tools/extensions.dart';
 import 'package:timers/tools/mm.dart';
 
 class PresetView extends StatelessWidget {
   final Presets preset;
+
   const PresetView({super.key, required this.preset});
 
   @override
@@ -36,7 +40,11 @@ class PresetView extends StatelessWidget {
               ),
               TimerCodeTag(name: timerCode).marginOnly(left: Rmin(10)),
               const Spacer(),
-              TextButton(onPressed: () {}, child: const Icon(Icons.delete)),
+              TextButton(
+                  onPressed: () {
+                    context.read<IsarService>().deletePresets(preset.id);
+                  },
+                  child: const Icon(Icons.delete)),
             ],
           ),
           Row(
@@ -69,13 +77,14 @@ List<Widget> timerValsListView(TimerCode timerCode, List<int> vals) {
           child: Text(vals[index].toString()),
         );
       case TimerCode.chime:
+        var dur = vals[index].seconds;
         return Container(
           height: Rmin(30),
           width: Rmin(100),
           margin: EdgeInsets.all(Rmin(2)),
           decoration: decoration,
           alignment: Alignment.center,
-          child: Text(vals[index].seconds.toText),
+          child: Text(dur.toText),
         );
     }
   });
@@ -107,13 +116,21 @@ class LoadButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(onPressed: () {},
+    return TextButton(
+      onPressed: () {
+        switch (preset.timerCode) {
+          case TimerCode.pomo:
+            context.read<WhatTimer>().toPomodoro(preset.timerVals);
+          case TimerCode.chime:
+            context.read<WhatTimer>().toChimes(preset.timerVals);
+        }
+      },
       style: TextButton.styleFrom(
-        backgroundColor: Colors.blue,
-        shape: const StadiumBorder(),
-        fixedSize: Size(10.h, 20.w)
-      ),
-      child: Text("Load",
+          backgroundColor: Colors.blue,
+          shape: const StadiumBorder(),
+          fixedSize: Size(10.h, 20.w)),
+      child: Text(
+        "Load",
         style: GoogleFonts.spaceMono(color: Colors.white),
         textAlign: TextAlign.center,
       ),

@@ -16,20 +16,24 @@ class SidebarTimerList extends StatelessWidget {
         ClearTextButton(
             height: 35.h,
             width: 162.w,
-            onPressed: context.read<WhatTimer>().toHome,
+            onPressed: context.read<WhatTimer>().toPresets,
             fontSize: 26.sp,
             label: "Presets"),
-          SizedBox(width: .4.sw),
+        SizedBox(width: .4.sw),
         ClearTextButton(
             height: 35.h,
             width: 155.w,
-            onPressed: context.read<WhatTimer>().toChimes,
+            onPressed: () {
+              context.read<WhatTimer>().toChimes([]);
+            },
             fontSize: 26.sp,
             label: "Chimes"),
         ClearTextButton(
             height: 35.h,
             width: 212.w,
-            onPressed: context.read<WhatTimer>().toPomodoro,
+            onPressed: () {
+              context.read<WhatTimer>().toPomodoro([]);
+            },
             fontSize: 26.sp,
             label: "Pomodoro"),
       ],

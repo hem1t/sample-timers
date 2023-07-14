@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:timers/color.dart';
+import 'package:timers/tools/extensions.dart';
 
 class CounterField extends StatelessWidget {
   final void Function(Duration)? onTick;
@@ -24,9 +25,8 @@ class CounterField extends StatelessWidget {
       color: state == 0 ? AppColors.contrastColor : AppColors.mainHighlight,
     );
 
-    String tstring = time.toString();
     return Text(
-      tstring.substring(0, tstring.indexOf('.')),
+      time.toText,
       style: style,
     );
   }

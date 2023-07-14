@@ -9,6 +9,7 @@ import 'package:timers/db/isar_services.dart';
 import 'package:timers/layout_widgets/buttons.dart';
 import 'package:timers/layout_widgets/fields/counter_field.dart';
 import 'package:timers/layout_widgets/fields/time_input_field.dart';
+import 'package:timers/tools/extensions.dart';
 
 import '../timer_base.dart';
 
@@ -16,6 +17,11 @@ class ChimesController extends ChangeNotifier {
   TimerState timerState = TimerState.preRunning;
   Duration time = Duration.zero;
   Duration chime = Duration.zero;
+
+  ChimesController(List<int> vals) {
+    time = (vals.getn(0) ?? 1800).seconds;
+    chime = (vals.getn(1) ?? 300).seconds;
+  }
 
   set setTimerState(TimerState state) => timerState = state;
   set setTime(Duration time) => time = time;
@@ -83,7 +89,7 @@ class ChimesPage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-    TimerHead(onAdd: (name) {
+        TimerHead(onAdd: (name) {
           context.read<IsarService>().savePreset(name, TimerCode.chime, [
             chimeController.time.inSeconds,
             chimeController.chime.inSeconds
@@ -117,6 +123,7 @@ class ChimesPage extends StatelessWidget {
               onTimeSelect: (time) {
                 chimeController.time = time;
               },
+              current: chimeController.time,
             ),
             Gap(10.h),
             TimeField(
@@ -128,6 +135,7 @@ class ChimesPage extends StatelessWidget {
               onTimeSelect: (time) {
                 chimeController.chime = time;
               },
+              current: chimeController.chime,
             ),
           ],
         ),
@@ -150,8 +158,7 @@ class ChimesPage extends StatelessWidget {
               onPressed: () {
                 chimeController.chimeOnPressed(counterField);
               },
-              label:
-                  context.watch<ChimesController>().chimeButtonLabel(),
+              label: context.watch<ChimesController>().chimeButtonLabel(),
               fontSize: 30.r,
             )
           ],

@@ -11,7 +11,7 @@ class Presets {
   @enumerated
   late TimerCode timerCode;
 
-  late List<int> timerVals;
+  List<int> timerVals = [];
 }
 
 enum TimerCode {

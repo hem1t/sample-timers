@@ -29,12 +29,16 @@ class MyApp extends StatelessWidget {
                 shadowColor: AppColors.contrastColor),
             home: SafeArea(
               child: Scaffold(
-                  backgroundColor: AppColors.backgroundColor,
-                  body: MultiProvider(providers: [
+                backgroundColor: AppColors.backgroundColor,
+                body: MultiProvider(
+                  providers: [
                     ChangeNotifierProvider(create: (_) => SideBarControl()),
                     ChangeNotifierProvider(create: (_) => WhatTimer()),
                     ChangeNotifierProvider(create: (_) => IsarService())
-                  ], child: const Timer())),
+                  ],
+                  child: const Timer(),
+                ),
+              ),
             ),
           );
         });

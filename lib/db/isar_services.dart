@@ -14,7 +14,7 @@ class IsarService extends ChangeNotifier {
     if (Isar.instanceNames.isEmpty) {
       final dir = await getApplicationDocumentsDirectory();
       return await Isar.open([PresetsSchema],
-          directory: dir.path, inspector: true);
+          directory: dir.path, inspector: false);
     }
 
     return Future.value(Isar.getInstance());
@@ -33,5 +33,10 @@ class IsarService extends ChangeNotifier {
   Stream<List<Presets>> getPresets() async* {
     final isar = await db;
     yield* isar.presets.where().watch(fireImmediately: true);
+  }
+
+  Future<void> deletePresets(Id id) async {
+    final isar = await db;
+    isar.writeTxn(() => isar.presets.delete(id));
   }
 }

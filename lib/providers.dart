@@ -18,22 +18,22 @@ class SideBarControl extends ChangeNotifier {
 }
 
 class WhatTimer extends ChangeNotifier {
-  StatelessWidget page = const PomodoroTimerPage();
+  StatelessWidget page = const PresetsPage();
 
-  toHome() {
+  toPresets() {
     page = const PresetsPage();
     debugPrint("Set Timer to Home!");
     notifyListeners();
   }
 
-  toPomodoro() {
-    page = const PomodoroTimerPage();
+  toPomodoro(List<int> vals) {
+    page = PomodoroTimerPage(vals: vals);
     debugPrint("Set Timer to POMODORO!");
     notifyListeners();
   }
 
-  toChimes() {
-    page = const ChimesTimerPage();
+  toChimes(List<int> vals) {
+    page = ChimesTimerPage(vals: vals);
     debugPrint("Set Timer to CHIMES!");
     notifyListeners();
   }
