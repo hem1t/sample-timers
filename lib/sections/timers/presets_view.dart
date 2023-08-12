@@ -25,7 +25,7 @@ class PresetView extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: Rmin(5), horizontal: Rmin(10)),
       width: .9.sw,
-      height: 70.h,
+      height: 75.h,
       padding: EdgeInsets.symmetric(horizontal: Rmin(10)),
       decoration: BoxDecoration(
           border: Border.all(width: Rmin(2), color: Colors.blue),
