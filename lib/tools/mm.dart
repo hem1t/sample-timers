@@ -26,18 +26,33 @@ double Wmin(double l) {
   return l.w >= l ? l.w : l;
 }
 
-// TODO: Think Later
 // R Min and Max;
-// double Rmm(double M, double m, double l) {
-//   return max(min(m.r, l.r), M.r);
-// }
+double Rmm(double l, {required double min, required double max}) {
+  if (l.r <= min) {
+    return min;
+  }
+  if (l.r >= max) {
+    return max;
+  }
+  return l.r;
+}
 
-// double Hmm(double l) {
-//   return l.r <= l ? l.r : l;
-// }
+double Hmm(double l, {required double min, required double max}) {
+  if (l.h <= min) {
+    return min;
+  }
+  if (l.h >= max) {
+    return max;
+  }
+  return l.h;
+}
 
-// double Wmm(double l) {
-//   return l.r <= l ? l.r : l;
-// }
-
-
+double Wmm(double l, {required double min, required double max}) {
+  if (l.w <= min) {
+    return min;
+  }
+  if (l.w >= max) {
+    return max;
+  }
+  return l.w;
+}
