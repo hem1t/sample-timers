@@ -31,8 +31,8 @@ Widget verticalStick(double width) {
 }
 
 class TimerHead extends StatelessWidget {
-  final void Function(String) onAdd;
-  const TimerHead({super.key, required this.onAdd});
+  final void Function(String)? onAdd;
+  const TimerHead({super.key, this.onAdd});
 
   @override
   Widget build(BuildContext context) {
@@ -49,16 +49,18 @@ class TimerHead extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: List.generate(3, (i) => verticalStick(25))),
             )),
-        TextButton(
-            onPressed: () {
-              onAdd("randomName");
-            },
-            style: TextButton.styleFrom(),
-            child: Icon(
-              Icons.add,
-              color: AppColors.mainHighlight,
-              size: 40.r,
-            ))
+        onAdd != null
+            ? TextButton(
+                onPressed: () {
+                  onAdd!("randomName");
+                },
+                style: TextButton.styleFrom(),
+                child: Icon(
+                  Icons.add,
+                  color: AppColors.mainHighlight,
+                  size: 40.r,
+                ))
+            : Container()
       ],
     ).marginSymmetric(horizontal: 7.w).marginOnly(top: 5.h);
   }
@@ -80,8 +82,7 @@ class PomodoroTimerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (_) => PomodoroController(vals),
-        child: const PomodoroPage());
+        create: (_) => PomodoroController(vals), child: const PomodoroPage());
   }
 }
 
@@ -105,9 +106,7 @@ class PresetsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TimerHead(
-          onAdd: (name) {},
-        ),
+        const TimerHead(),
         StreamBuilder(
             stream: context.read<IsarService>().getPresets(),
             builder: (context, stream) {
