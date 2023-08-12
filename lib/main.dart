@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
             home: SafeArea(
               child: Scaffold(
                 backgroundColor: AppColors.backgroundColor,
+                resizeToAvoidBottomInset: false,
                 body: MultiProvider(
                   providers: [
                     ChangeNotifierProvider(create: (_) => SideBarControl()),
@@ -55,10 +56,14 @@ class Timer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Stack(
+    return Stack(
       children: [
-        TimerPage(),
-        Sidebar(),
+        GestureDetector(
+            onTap: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: const TimerPage()),
+        const Sidebar(),
       ],
     );
   }

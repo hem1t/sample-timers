@@ -30,9 +30,31 @@ Widget verticalStick(double width) {
   );
 }
 
-class TimerHead extends StatelessWidget {
+class TimerHead extends StatefulWidget {
   final void Function(String)? onAdd;
   const TimerHead({super.key, this.onAdd});
+
+  @override
+  State<TimerHead> createState() => _TimerHeadState();
+}
+
+class _TimerHeadState extends State<TimerHead> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _controller = TextEditingController();
+    _controller.clearComposing();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _controller.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +71,21 @@ class TimerHead extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: List.generate(3, (i) => verticalStick(25))),
             )),
-        onAdd != null
+        widget.onAdd != null
+            ? Expanded(
+                child: TextField(
+                  autofocus: false,
+                  controller: _controller,
+                  textAlign: TextAlign.center,
+                  decoration: const InputDecoration(
+                      border: InputBorder.none, hintText: "Name"),
+                ),
+              )
+            : Container(),
+        widget.onAdd != null
             ? TextButton(
                 onPressed: () {
-                  onAdd!("randomName");
+                  widget.onAdd!(_controller.text);
                 },
                 style: TextButton.styleFrom(),
                 child: Icon(
