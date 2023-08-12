@@ -10,6 +10,7 @@ import 'package:timers/sections/timers/timer_base.dart';
 import 'sections/sidebar/sidebar.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MyApp());
