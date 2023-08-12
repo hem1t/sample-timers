@@ -44,7 +44,7 @@ const PresetsSchema = CollectionSchema(
       id: -457108311343499266,
       name: r'presetName',
       unique: true,
-      replace: false,
+      replace: true,
       properties: [
         IndexPropertySchema(
           name: r'presetName',

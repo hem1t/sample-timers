@@ -5,7 +5,7 @@ part 'presets.g.dart';
 class Presets {
   Id id = Isar.autoIncrement;
 
-  @Index(unique: true)
+  @Index(unique: true, replace: true)
   late String presetName;
 
   @enumerated
@@ -14,10 +14,7 @@ class Presets {
   List<int> timerVals = [];
 }
 
-enum TimerCode {
-  pomo,
-  chime
-}
+enum TimerCode { pomo, chime }
 
 // Won't work with super class
 //
